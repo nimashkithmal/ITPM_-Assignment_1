@@ -17,10 +17,17 @@ jobs:
       run: npm ci
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
+    - name: Verify test data exists
+      run: |
+        if [ ! -f "test_data/IT23225138 .xlsx" ]; then
+          echo "::error::Missing test_data/IT23225138 .xlsx - ensure the file is committed"
+          exit 1
+        fi
     - name: Run Playwright tests
       run: npx playwright test
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
+      continue-on-error: true
       with:
         name: playwright-report
         path: playwright-report/
